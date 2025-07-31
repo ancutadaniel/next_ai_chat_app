@@ -16,13 +16,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning={true}> 
       <body className={inter.className}>
-        {/* We use a flex container to create the sidebar/main content layout */}
+        
         <div className="flex h-screen bg-gray-900 overflow-hidden">
           <Sidebar />
           <main className="flex-1 p-4">
-            {children} {/* 'children' will be our main page content */}
+            {children} 
           </main>
         </div>
       </body>

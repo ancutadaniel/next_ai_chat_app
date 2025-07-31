@@ -1,25 +1,35 @@
-import React from "react";
+import React from 'react';
+import { auth } from '@/app/api/auth/[...nextauth]/route';
+import SignInButton from './SignInButton';
+import SignOutButton from './SignOutButton';
 
-const Sidebar = () => {
+export default async function Sidebar() {
+  const session = await auth();
+
   return (
-    // The 'flex-shrink-0' class prevents the sidebar from shrinking
-    <div className="bg-gray-800 text-white w-64 p-4 flex-shrink-0">
-      <h1 className="text-xl font-bold mb-4">AI Chat</h1>
-      {/* This list will eventually hold the user's chat history */}
-      <ul>
-        <li className="mb-2">
-          <a href="#" className="hover:bg-gray-700 rounded-md p-2 block">
-            Chat History 1
-          </a>
-        </li>
-        <li className="mb-2">
-          <a href="#" className="hover:bg-gray-700 rounded-md p-2 block">
-            Chat History 2
-          </a>
-        </li>
-      </ul>
+    <div className="flex h-full flex-col bg-gray-800 p-4 text-white">
+      <div className="flex-1">
+        <h1 className="mb-4 text-xl font-bold">AI Chat</h1>
+        <ul>
+          <li className="mb-2">
+            <a href="#" className="block rounded-md p-2 hover:bg-gray-700">
+              Chat History 1
+            </a>
+          </li>
+          <li className="mb-2">
+            <a href="#" className="block rounded-md p-2 hover:bg-gray-700">
+              Chat History 2
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div className="mt-auto">
+        {session?.user ? (
+          <SignOutButton userName={session.user.name ?? 'User'} />
+        ) : (
+          <SignInButton />
+        )}
+      </div>
     </div>
   );
-};
-
-export default Sidebar;
+}

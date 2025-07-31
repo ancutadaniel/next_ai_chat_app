@@ -1,7 +1,9 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  /* config options here */
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  experimental: {
+    // Correct way to enable server actions with default options
+    serverActions: {},
+  },
 };
 
 export default nextConfig;
