@@ -2,8 +2,9 @@
 
 import React, { useOptimistic, useRef, useEffect } from 'react';
 import { sendMessageAction } from '@/app/actions';
-import ChatMessage, { type Message } from './ChatMessage';
+import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
+import { Message } from '@/types';
 
 interface ChatProps {
   initialMessages: Message[];
@@ -46,7 +47,7 @@ const Chat = ({ initialMessages }: ChatProps) => {
       {/* Chat Input Area */}
       <div className="border-t border-gray-700">
         {/* We pass our client-side `formAction` wrapper to the form */}
-        <form action={formAction} ref={formRef} className="bg-gray-900">
+        <form action={formAction} ref={formRef} >
           <ChatInput />
         </form>
       </div>

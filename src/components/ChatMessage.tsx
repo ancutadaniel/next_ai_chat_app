@@ -1,33 +1,26 @@
-import React from "react";
-
-// We define a TypeScript interface for our message objects for type safety
-export interface Message {
-  role: "user" | "assistant";
-  content: string;
-}
+// In: src/components/ChatMessage.tsx
+import React from 'react';
+import type { Message } from '@/types'; // Import from our new types file
+import UserIcon from './icons/UserIcon';
+import SparklesIcon from './icons/SparklesIcon';
 
 interface ChatMessageProps {
   message: Message;
 }
 
-const ChatMessage = ({ message }: ChatMessageProps) => {
-  const isAIMessage = message.role === "assistant";
+export default function ChatMessage({ message }: ChatMessageProps) {
+  const isAIMessage = message.role === 'assistant';
 
   return (
-    // The outer div changes background color for AI messages to create a striped effect
-    <div className={`py-5 ${isAIMessage ? "bg-gray-800" : ""}`}>
-      <div className="max-w-4xl mx-auto px-4 flex items-start gap-4">
-        {/* Simple avatar icon */}
-        <div className="w-8 h-8 rounded-full bg-gray-600 flex-shrink-0 flex items-center justify-center text-white font-bold text-sm">
-          {isAIMessage ? "AI" : "You"}
+    <div className="py-6">
+      <div className="mx-auto flex max-w-4xl gap-4 px-4">
+        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[var(--studio-sidebar)] p-1">
+          {isAIMessage ? <SparklesIcon /> : <UserIcon />}
         </div>
-        {/* Message content. 'whitespace-pre-wrap' preserves line breaks */}
-        <div className="flex-1 pt-1 text-white whitespace-pre-wrap">
-          <p>{message.content}</p>
+        <div className="prose prose-invert max-w-none flex-1 whitespace-pre-wrap pt-1">
+          {message.content}
         </div>
       </div>
     </div>
   );
-};
-
-export default ChatMessage;
+}

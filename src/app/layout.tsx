@@ -19,9 +19,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning={true}> 
       <body className={inter.className}>
         
-        <div className="flex h-screen bg-gray-900 overflow-hidden">
+        <div className="flex h-screen  overflow-hidden">
           <Sidebar />
-          <main className="flex-1 p-4">
+          <main className="flex-1 p-4 bg-black">
             {children} 
           </main>
         </div>

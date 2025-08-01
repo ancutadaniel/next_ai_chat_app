@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import type { Message } from '@/components/ChatMessage';
+import { Message } from '@/types';
 // Import the TRUE server-side functions from our own auth config file
 import { signIn, signOut } from '@/app/api/auth/[...nextauth]/route';
 

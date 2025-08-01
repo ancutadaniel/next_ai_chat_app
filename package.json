@@ -12,11 +12,13 @@
     "next": "15.4.5",
     "next-auth": "^5.0.0-beta.29",
     "react": "19.2.0-canary-9784cb37-20250730",
-    "react-dom": "19.2.0-canary-9784cb37-20250730"
+    "react-dom": "19.2.0-canary-9784cb37-20250730",
+    "react-textarea-autosize": "^8.5.9"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@tailwindcss/typography": "^0.5.16",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
