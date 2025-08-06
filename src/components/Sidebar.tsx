@@ -3,6 +3,7 @@ import React from 'react';
 import { auth } from '@/app/api/auth/[...nextauth]/route';
 import SignInButton from './SignInButton';
 import SignOutButton from './SignOutButton';
+import Link from 'next/link';
 
 // The PlusIcon component remains the same
 function PlusIcon() {
@@ -19,10 +20,10 @@ export default async function Sidebar() {
   return (
     // Use CSS variables for background and border color
     <div className="flex h-full w-64 flex-col bg-[var(--studio-sidebar)] p-2 border-r border-[var(--studio-border)]">
-      <a href="/" className="mb-2 flex items-center gap-3 rounded-md p-3 text-sm hover:bg-white/10">
+      <Link href="/" className="mb-2 flex items-center gap-3 rounded-md p-3 text-sm hover:bg-white/10">
         <PlusIcon />
         New chat
-      </a>
+      </Link>
 
       <div className="flex-1 space-y-2 overflow-y-auto">
         <div className="p-3 text-sm text-[var(--studio-text-secondary)]">History coming soon...</div>
