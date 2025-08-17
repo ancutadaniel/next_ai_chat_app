@@ -1,23 +1,27 @@
 import { auth } from '@/app/api/auth/[...nextauth]/route';
-import Chat from '@/components/Chat';
-import { getMessages } from './actions';
 
 export default async function Home() {
   const session = await auth();
 
-  // If there's no session, the user is not logged in.
+  // If the user is not logged in, show a generic welcome message.
   if (!session) {
     return (
-      <div className="flex h-full flex-col items-center justify-center text-white">
+      <div className="flex h-full flex-col items-center justify-center">
         <h1 className="text-3xl font-bold">Welcome to AI Chat</h1>
-        <p className="mt-2 text-lg text-gray-400">
+        <p className="mt-2 text-lg text-[var(--studio-text-secondary)]">
           Please sign in to start chatting.
         </p>
       </div>
     );
   }
 
-  // If the user is logged in, show the chat interface.
-  const initialMessages = await getMessages();
-  return <Chat initialMessages={initialMessages} />;
+  // If the user IS logged in, welcome them by name and prompt to start a new chat.
+  return (
+    <div className="flex h-full flex-col items-center justify-center">
+      <h1 className="text-3xl font-bold">Welcome, {session.user?.name}!</h1>
+      <p className="mt-2 text-lg text-[var(--studio-text-secondary)]">
+        Select a conversation or start a &quot;New chat&quot; from the sidebar.
+      </p>
+    </div>
+  );
 }

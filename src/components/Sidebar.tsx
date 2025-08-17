@@ -1,11 +1,10 @@
-// In: src/components/Sidebar.tsx
 import React from 'react';
+import Link from 'next/link';
 import { auth } from '@/app/api/auth/[...nextauth]/route';
+import { createNewChat, getChatHistory } from '@/app/actions';
 import SignInButton from './SignInButton';
 import SignOutButton from './SignOutButton';
-import Link from 'next/link';
 
-// The PlusIcon component remains the same
 function PlusIcon() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
@@ -16,17 +15,27 @@ function PlusIcon() {
 
 export default async function Sidebar() {
   const session = await auth();
+  const history = session ? await getChatHistory() : [];
 
   return (
-    // Use CSS variables for background and border color
     <div className="flex h-full w-64 flex-col bg-[var(--studio-sidebar)] p-2 border-r border-[var(--studio-border)]">
-      <Link href="/" className="mb-2 flex items-center gap-3 rounded-md p-3 text-sm hover:bg-white/10">
-        <PlusIcon />
-        New chat
-      </Link>
+      <form action={createNewChat}>
+        <button type="submit" className="w-full mb-2 flex items-center gap-3 rounded-md p-3 text-sm hover:bg-white/10">
+          <PlusIcon />
+          New chat
+        </button>
+      </form>
 
-      <div className="flex-1 space-y-2 overflow-y-auto">
-        <div className="p-3 text-sm text-[var(--studio-text-secondary)]">History coming soon...</div>
+      <div className="flex-1 space-y-1 overflow-y-auto">
+        {history.map((chat) => (
+          <Link
+            key={chat.id}
+            href={`/chat/${chat.id}`}
+            className="block rounded-md p-3 text-sm text-[var(--studio-text-secondary)] hover:bg-white/10 truncate"
+          >
+            {chat.title}
+          </Link>
+        ))}
       </div>
 
       <div className="border-t border-[var(--studio-border)] p-2">
