@@ -4,10 +4,10 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { randomUUID } from 'crypto';
 import { eq } from 'drizzle-orm';
-import { unstable_noStore as noStore } from 'next/cache'; // 1. IMPORT noStore
+import { unstable_noStore as noStore } from 'next/cache';
 
-// Core Next.js / NextAuth imports
-import { auth, signIn, signOut } from '@/app/api/auth/[...nextauth]/route';
+// UPDATED IMPORT
+import { auth, signIn, signOut } from '@/auth';
 
 // Database and schema imports
 import { db } from '@/db';
@@ -18,13 +18,9 @@ import Groq from 'groq-sdk';
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-// --- DATABASE-POWERED ACTIONS ---
-
 export async function createNewChat() {
   const session = await auth();
   if (!session?.user?.id) {
-    // If the user is somehow not authenticated, throw an error.
-    // This will be caught by Next.js's error handling.
     throw new Error('Unauthorized: Please sign in to create a chat.');
   }
   const userId = session.user.id;
@@ -43,7 +39,6 @@ export async function createNewChat() {
     content: 'Hello! How can I assist you today?',
   });
   
-  // The redirect automatically throws an exception, so it also satisfies the type.
   redirect(`/chat/${newConversationId}`);
 }
 
@@ -61,28 +56,22 @@ export async function getChatHistory() {
 }
 
 export async function getConversation(id: string) {
-  
   const session = await auth();
   if (!session?.user?.id) return null;
 
-  // Query 1: Find the conversation by its ID.
   const conversation = await db.query.conversations.findFirst({
     where: eq(conversations.id, id),
   });
 
-  // If no conversation, or if the user doesn't own it, return null.
   if (!conversation || conversation.userId !== session.user.id) {
     return null;
   }
-
   
-  // Query 2: Find all messages related to this conversation.
   const conversationMessages = await db.query.messages.findMany({
     where: eq(messages.conversationId, id),
-    orderBy: (messages, { asc }) => [asc(messages.createdAt)], // Order messages by creation time
+    orderBy: (messages, { asc }) => [asc(messages.createdAt)],
   });
 
-  // Combine the results and return
   return {
     ...conversation,
     messages: conversationMessages,
@@ -104,7 +93,7 @@ export async function sendMessageAction(formData: FormData) {
   });
 
   const currentConversation = await getConversation(conversationId);
-  if (!currentConversation) return; // Should not happen, but a good safeguard
+  if (!currentConversation) return;
 
   if (currentConversation.messages.length === 2 && currentConversation.title === 'New Chat') {
     const newTitle = userInput.substring(0, 30) + (userInput.length > 30 ? '...' : '');
@@ -135,7 +124,6 @@ export async function sendMessageAction(formData: FormData) {
   revalidatePath('/');
 }
 
-// --- Auth actions remain the same ---
 export { signInAction, signOutAction };
 
 async function signInAction() {

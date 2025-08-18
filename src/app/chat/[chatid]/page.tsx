@@ -1,6 +1,6 @@
 import { getConversation } from '@/app/actions';
 import Chat from '@/components/Chat';
-import { auth } from '@/app/api/auth/[...nextauth]/route';
+import { auth } from '@/auth';
 
 interface PageProps {
   // The params prop is now a Promise
