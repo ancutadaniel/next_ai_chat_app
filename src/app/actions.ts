@@ -1,85 +1,159 @@
-// In: src/app/actions.ts
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation'; // Import redirect
-import type { Conversation } from '@/types'; // Import Conversation
-import { signIn, signOut } from '@/app/api/auth/[...nextauth]/route';
+import { redirect } from 'next/navigation';
+import { randomUUID } from 'crypto';
+import { eq, sql } from 'drizzle-orm';
+
+// Core Next.js / NextAuth imports
+import { auth, signIn, signOut } from '@/app/api/auth/[...nextauth]/route';
+
+// Database and schema imports
+import { db } from '@/db';
+import { conversations, messages } from '@/db/schema';
+
+// AI SDK import
 import Groq from 'groq-sdk';
-import { randomUUID } from 'crypto'; // Import for generating unique IDs
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-// Our new in-memory "database"
-const conversations: Conversation[] = [];
+// --- DATABASE-POWERED ACTIONS ---
 
-// --- NEW ACTIONS ---
-
-// Action to create a new, empty chat
 export async function createNewChat() {
-  const newConversation: Conversation = {
-    id: randomUUID(),
+  const session = await auth();
+  if (!session?.user?.id) {
+    // If the user is somehow not authenticated, throw an error.
+    // This will be caught by Next.js's error handling.
+    throw new Error('Unauthorized: Please sign in to create a chat.');
+  }
+  const userId = session.user.id;
+  const newConversationId = randomUUID();
+
+  await db.insert(conversations).values({
+    id: newConversationId,
+    userId: userId,
     title: 'New Chat',
-    messages: [
-      { role: 'assistant', content: 'Hello! How can I assist you today?' },
-    ],
-  };
-  conversations.push(newConversation);
-  // Redirect the user to the new chat's page
-  redirect(`/chat/${newConversation.id}`);
+  });
+
+  await db.insert(messages).values({
+    id: randomUUID(),
+    conversationId: newConversationId,
+    role: 'assistant',
+    content: 'Hello! How can I assist you today?',
+  });
+  
+  // The redirect automatically throws an exception, so it also satisfies the type.
+  redirect(`/chat/${newConversationId}`);
 }
 
-// Action to get the list of all chat titles for the history
 export async function getChatHistory() {
-  // In a real app, you'd just select the id and title
-  return conversations.map(({ id, title }) => ({ id, title }));
+  const session = await auth();
+  if (!session?.user?.id) return [];
+  
+  const userConversations = await db
+    .select({ id: conversations.id, title: conversations.title })
+    .from(conversations)
+    .where(eq(conversations.userId, session.user.id));
+    
+  return userConversations;
 }
 
-// Action to get a specific conversation by its ID
+// Define the shape of the object we expect back from our raw SQL query
+type ConversationQueryResult = {
+  id: string;
+  user_id: string;
+  title: string;
+  created_at: Date;
+  messages: {
+    id: string | null; // The ID can be null if no messages exist for the conversation
+    role: 'user' | 'assistant';
+    content: string;
+    createdAt: Date;
+  }[] | null; // The entire messages array can be null
+};
+
 export async function getConversation(id: string) {
-  return conversations.find((convo) => convo.id === id);
+  
+  const session = await auth();
+  if (!session?.user?.id) return null;
+
+  // Query 1: Find the conversation by its ID.
+  const conversation = await db.query.conversations.findFirst({
+    where: eq(conversations.id, id),
+  });
+
+  // If no conversation, or if the user doesn't own it, return null.
+  if (!conversation || conversation.userId !== session.user.id) {
+    return null;
+  }
+
+  
+  // Query 2: Find all messages related to this conversation.
+  const conversationMessages = await db.query.messages.findMany({
+    where: eq(messages.conversationId, id),
+    orderBy: (messages, { asc }) => [asc(messages.createdAt)], // Order messages by creation time
+  });
+
+  // Combine the results and return
+  return {
+    ...conversation,
+    messages: conversationMessages,
+  };
 }
-
-
-// --- MODIFIED ACTION ---
 
 export async function sendMessageAction(formData: FormData) {
+  const session = await auth();
   const userInput = formData.get('message') as string;
-  const conversationId = formData.get('conversationId') as string; // Get the conversation ID from the form
+  const conversationId = formData.get('conversationId') as string;
 
-  if (!userInput || !conversationId) return;
+  if (!session?.user?.id || !userInput.trim() || !conversationId) return;
 
-  const conversation = await getConversation(conversationId);
-  if (!conversation) return;
+  await db.insert(messages).values({
+    id: randomUUID(),
+    conversationId: conversationId,
+    role: 'user',
+    content: userInput,
+  });
 
-  conversation.messages.push({ role: 'user', content: userInput });
+  const currentConversation = await getConversation(conversationId);
+  if (!currentConversation) return; // Should not happen, but a good safeguard
 
-  // Generate a title for the conversation from the first user message
-  if (conversation.messages.length === 2 && conversation.title === 'New Chat') {
-      conversation.title = userInput.substring(0, 30) + (userInput.length > 30 ? '...' : '');
+  if (currentConversation.messages.length === 2 && currentConversation.title === 'New Chat') {
+    const newTitle = userInput.substring(0, 30) + (userInput.length > 30 ? '...' : '');
+    await db.update(conversations)
+      .set({ title: newTitle })
+      .where(eq(conversations.id, conversationId));
   }
 
   try {
     const completion = await groq.chat.completions.create({
-      messages: conversation.messages, // Send the whole conversation
+      messages: currentConversation.messages.map(({ role, content }) => ({ role, content })),
       model: 'llama3-8b-8192',
     });
-    const aiResponse = completion.choices[0]?.message?.content || 'Sorry, I had trouble thinking of a response.';
-    conversation.messages.push({ role: 'assistant', content: aiResponse });
+    const aiResponse = completion.choices[0]?.message?.content || 'Sorry, I had trouble with that.';
+    
+    await db.insert(messages).values({
+      id: randomUUID(),
+      conversationId: conversationId,
+      role: 'assistant',
+      content: aiResponse,
+    });
+
   } catch (error) {
     console.error('Groq API call failed:', error);
-    conversation.messages.push({ role: 'assistant', content: 'Sorry, I couldn\'t connect to the AI.' });
   }
 
-  // Revalidate the specific chat path and the layout (for the history)
   revalidatePath(`/chat/${conversationId}`);
   revalidatePath('/');
 }
 
-export async function signInAction() {
+// --- Auth actions remain the same ---
+export { signInAction, signOutAction };
+
+async function signInAction() {
   await signIn('github', { redirectTo: '/' });
 }
 
-export async function signOutAction() {
+async function signOutAction() {
   await signOut({ redirectTo: '/' });
 }

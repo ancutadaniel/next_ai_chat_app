@@ -1,5 +1,6 @@
 // In: src/db/schema.ts
-import { pgTable, text, timestamp, uniqueIndex } from 'drizzle-orm/pg-core';
+// 1. Import 'index'
+import { pgTable, text, timestamp, index, uniqueIndex } from 'drizzle-orm/pg-core'; 
 import { relations } from 'drizzle-orm';
 
 export const conversations = pgTable('conversations', {
@@ -8,9 +9,11 @@ export const conversations = pgTable('conversations', {
   title: text('title').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 }, (table) => ({
-  userIndex: uniqueIndex('user_idx').on(table.userId),
+  // 2. Change 'uniqueIndex' to 'index'
+  userIndex: index('user_idx').on(table.userId), 
 }));
 
+// ... rest of the file is unchanged ...
 export const messages = pgTable('messages', {
   id: text('id').primaryKey(),
   conversationId: text('conversation_id').references(() => conversations.id).notNull(),

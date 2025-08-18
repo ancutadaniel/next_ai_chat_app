@@ -2,9 +2,9 @@
 import { drizzle } from 'drizzle-orm/neon-http';
 import { neon } from '@neondatabase/serverless';
 import { config } from 'dotenv';
-import * as schema from './db/schema'; // Import the schema
+import * as schema from './db/schema'; // 1. Import your entire schema
 
-// This ensures that environment variables are loaded, especially for scripts
+// Load environment variables
 config({ path: '.env.local' });
 
 if (!process.env.POSTGRES_URL) {
@@ -13,5 +13,6 @@ if (!process.env.POSTGRES_URL) {
 
 const sql = neon(process.env.POSTGRES_URL);
 
-// Pass the schema to the drizzle instance to enable the relational query API
+// 2. Pass the imported schema to the drizzle instance
+// This enables the fully-typed relational query API (db.query)
 export const db = drizzle(sql, { schema });
