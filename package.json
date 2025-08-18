@@ -8,8 +8,10 @@
     "start": "next start",
     "lint": "next lint",
     "db:push": "drizzle-kit push",
-    "db:test": "node scripts/db-test.mjs",
-    "db:studio": "drizzle-kit studio"
+    "db:drop": "drizzle-kit drop",
+    "db:studio": "drizzle-kit studio",
+    "db:reset": "yarn db:drop && yarn db:push",
+    "db:test": "node scripts/db-test.mjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.1",
