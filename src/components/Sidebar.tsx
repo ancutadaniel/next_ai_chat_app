@@ -20,7 +20,12 @@ export default async function Sidebar() {
   return (
     <div className="flex h-full w-64 flex-col bg-[var(--studio-sidebar)] p-2 border-r border-[var(--studio-border)]">
       <form action={createNewChat}>
-        <button type="submit" className="w-full mb-2 flex items-center gap-3 rounded-md p-3 text-sm hover:bg-white/10">
+      <button
+          type="submit"
+          // Add the disabled: variants to this className string
+          className="w-full mb-2 flex items-center gap-3 rounded-md p-3 text-sm hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={!session}
+        >
           <PlusIcon />
           New chat
         </button>

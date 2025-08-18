@@ -3,7 +3,8 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { randomUUID } from 'crypto';
-import { eq, sql } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
+import { unstable_noStore as noStore } from 'next/cache'; // 1. IMPORT noStore
 
 // Core Next.js / NextAuth imports
 import { auth, signIn, signOut } from '@/app/api/auth/[...nextauth]/route';
@@ -47,6 +48,7 @@ export async function createNewChat() {
 }
 
 export async function getChatHistory() {
+  noStore();
   const session = await auth();
   if (!session?.user?.id) return [];
   
@@ -57,20 +59,6 @@ export async function getChatHistory() {
     
   return userConversations;
 }
-
-// Define the shape of the object we expect back from our raw SQL query
-type ConversationQueryResult = {
-  id: string;
-  user_id: string;
-  title: string;
-  created_at: Date;
-  messages: {
-    id: string | null; // The ID can be null if no messages exist for the conversation
-    role: 'user' | 'assistant';
-    content: string;
-    createdAt: Date;
-  }[] | null; // The entire messages array can be null
-};
 
 export async function getConversation(id: string) {
   
