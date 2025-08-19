@@ -124,6 +124,30 @@ export async function sendMessageAction(formData: FormData) {
   revalidatePath('/');
 }
 
+export async function deleteConversation(conversationId: string) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    throw new Error('Unauthorized');
+  }
+
+  // First, verify the user owns this conversation
+  const conversation = await db.query.conversations.findFirst({
+    where: eq(conversations.id, conversationId),
+  });
+
+  if (conversation?.userId !== session.user.id) {
+    throw new Error('Forbidden');
+  }
+
+  // Delete the conversation. The 'onDelete: cascade' in the schema
+  // will automatically delete all associated messages.
+  await db.delete(conversations).where(eq(conversations.id, conversationId));
+
+  // Revalidate and redirect
+  revalidatePath('/'); // To update the history in the sidebar
+  redirect('/'); // Redirect to the home page after deletion
+}
+
 export { signInAction, signOutAction };
 
 async function signInAction() {

@@ -1,9 +1,9 @@
 import React from 'react';
-import Link from 'next/link';
 import { auth } from '@/auth';
 import { createNewChat, getChatHistory } from '@/app/actions';
 import SignInButton from './SignInButton';
 import SignOutButton from './SignOutButton';
+import HistoryItem from './HistoryItem'; 
 
 function PlusIcon() {
   return (
@@ -32,13 +32,7 @@ export default async function Sidebar() {
 
       <div className="flex-1 space-y-1 overflow-y-auto">
         {history.map((chat) => (
-          <Link
-            key={chat.id}
-            href={`/chat/${chat.id}`}
-            className="block rounded-md p-3 text-sm text-[var(--studio-text-secondary)] hover:bg-white/10 truncate"
-          >
-            {chat.title}
-          </Link>
+          <HistoryItem key={chat.id} chat={chat} />
         ))}
       </div>
 
