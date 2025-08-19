@@ -15,10 +15,10 @@ export default async function ChatPage({ params }: PageProps) {
     return <div>Please sign in to view your chats.</div>;
   }
 
+  
   // Await the params promise to get the resolved object
   const resolvedParams = await params;
   const conversation = await getConversation(resolvedParams.chatId);
-
   if (!conversation) {
     return <div>Chat not found or you do not have permission to view it.</div>;
   }
