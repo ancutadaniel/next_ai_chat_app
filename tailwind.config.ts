@@ -1,5 +1,6 @@
-// In: ai-chat-app/tailwind.config.ts
+// In: tailwind.config.ts
 import type { Config } from 'tailwindcss';
+import typography from '@tailwindcss/typography'; // Import the plugin
 
 const config: Config = {
   content: [
@@ -7,10 +8,10 @@ const config: Config = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
-    // We leave this empty to use the new v4 CSS variable approach.
+    // ...
   },
   plugins: [
-    require('@tailwindcss/typography'), // Add the typography plugin here
+    typography, // Use the imported plugin
   ],
 };
 export default config;
