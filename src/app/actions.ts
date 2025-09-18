@@ -105,7 +105,7 @@ export async function sendMessageAction(formData: FormData) {
   try {
     const completion = await groq.chat.completions.create({
       messages: currentConversation.messages.map(({ role, content }) => ({ role, content })),
-      model: 'llama3-8b-8192',
+      model: 'llama-3.1-8b-instant',
     });
     const aiResponse = completion.choices[0]?.message?.content || 'Sorry, I had trouble with that.';
     
