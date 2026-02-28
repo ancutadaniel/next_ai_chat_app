@@ -24,6 +24,7 @@ function getDb() {
 // Lazy-initialized database instance to avoid build-time errors
 export const db = new Proxy({} as ReturnType<typeof getDb>, {
   get(_, prop) {
-    return (getDb() as any)[prop];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (getDb() as Record<string | symbol, unknown>)[prop];
   },
 });
