@@ -7,12 +7,23 @@ import * as schema from './db/schema'; // 1. Import your entire schema
 // Load environment variables
 config({ path: '.env.local' });
 
-if (!process.env.POSTGRES_URL) {
-  throw new Error('Database URL is not set in the environment variables');
+let _db: ReturnType<typeof drizzle> | null = null;
+
+function getDb() {
+  if (!_db) {
+    const url = process.env.POSTGRES_URL;
+    if (!url) {
+      throw new Error('Database URL is not set in the environment variables');
+    }
+    const sql = neon(url);
+    _db = drizzle(sql, { schema });
+  }
+  return _db;
 }
 
-const sql = neon(process.env.POSTGRES_URL);
-
-// 2. Pass the imported schema to the drizzle instance
-// This enables the fully-typed relational query API (db.query)
-export const db = drizzle(sql, { schema });
+// Lazy-initialized database instance to avoid build-time errors
+export const db = new Proxy({} as ReturnType<typeof getDb>, {
+  get(_, prop) {
+    return (getDb() as any)[prop];
+  },
+});
