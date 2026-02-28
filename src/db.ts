@@ -2,35 +2,17 @@
 import { drizzle } from 'drizzle-orm/neon-http';
 import { neon } from '@neondatabase/serverless';
 import { config } from 'dotenv';
-import * as schema from './db/schema';
+import * as schema from './db/schema'; // 1. Import your entire schema
 
 // Load environment variables
 config({ path: '.env.local' });
 
-function createDb() {
-  const url = process.env.POSTGRES_URL;
-  if (!url) {
-    throw new Error('Database URL is not set in the environment variables');
-  }
-  const sql = neon(url);
-  return drizzle(sql, { schema });
+if (!process.env.POSTGRES_URL) {
+  throw new Error('Database URL is not set in the environment variables');
 }
 
-type Database = ReturnType<typeof createDb>;
+const sql = neon(process.env.POSTGRES_URL);
 
-let _db: Database | null = null;
-
-function getDb(): Database {
-  if (!_db) {
-    _db = createDb();
-  }
-  return _db;
-}
-
-// Lazy-initialized database instance to avoid build-time errors
-// when POSTGRES_URL is not available during static page generation
-export const db = new Proxy({} as Database, {
-  get(_, prop: string | symbol) {
-    return Reflect.get(getDb(), prop);
-  },
-});
+// 2. Pass the imported schema to the drizzle instance
+// This enables the fully-typed relational query API (db.query)
+export const db = drizzle(sql, { schema });
