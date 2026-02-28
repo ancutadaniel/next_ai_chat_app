@@ -16,7 +16,13 @@ import { conversations, messages } from '@/db/schema';
 // AI SDK import
 import Groq from 'groq-sdk';
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+function getGroqClient() {
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey) {
+    throw new Error('GROQ_API_KEY environment variable is not set');
+  }
+  return new Groq({ apiKey });
+}
 
 export async function createNewChat() {
   const session = await auth();
@@ -103,7 +109,7 @@ export async function sendMessageAction(formData: FormData) {
   }
 
   try {
-    const completion = await groq.chat.completions.create({
+    const completion = await getGroqClient().chat.completions.create({
       messages: currentConversation.messages.map(({ role, content }) => ({ role, content })),
       model: 'llama-3.1-8b-instant',
     });
