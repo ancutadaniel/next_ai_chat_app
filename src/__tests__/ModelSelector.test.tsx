@@ -9,34 +9,30 @@ describe('ModelSelector', () => {
     onModelChange: vi.fn(),
   };
 
-  it('renders a select element', () => {
+  it('renders a trigger button with selected model name', () => {
     render(<ModelSelector {...defaultProps} />);
 
-    expect(screen.getByRole('combobox')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: new RegExp(AI_MODELS[0].name) })).toBeInTheDocument();
   });
 
-  it('shows all models from AI_MODELS grouped by provider', () => {
+  it('opens dropdown when clicked and shows all models', () => {
     render(<ModelSelector {...defaultProps} />);
+
+    fireEvent.click(screen.getByRole('button', { name: new RegExp(AI_MODELS[0].name) }));
 
     for (const model of AI_MODELS) {
-      expect(screen.getByText(model.name)).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: model.name })).toBeInTheDocument();
     }
-
-    // Check optgroups exist
-    const select = screen.getByRole('combobox');
-    const optgroups = select.querySelectorAll('optgroup');
-    const providers = [...new Set(AI_MODELS.map((m) => m.provider))];
-    expect(optgroups).toHaveLength(providers.length);
   });
 
-  it('calls onModelChange with correct model data when selection changes', () => {
+  it('calls onModelChange when an option is clicked', () => {
     const onModelChange = vi.fn();
     render(<ModelSelector {...defaultProps} onModelChange={onModelChange} />);
 
+    fireEvent.click(screen.getByRole('button', { name: new RegExp(AI_MODELS[0].name) }));
+
     const targetModel = AI_MODELS[1];
-    fireEvent.change(screen.getByRole('combobox'), {
-      target: { value: targetModel.id },
-    });
+    fireEvent.click(screen.getByRole('option', { name: targetModel.name }));
 
     expect(onModelChange).toHaveBeenCalledWith(
       targetModel.id,
@@ -45,15 +41,22 @@ describe('ModelSelector', () => {
     );
   });
 
-  it('has the correct initial selected value', () => {
-    const selectedModel = AI_MODELS[2];
-    render(
-      <ModelSelector
-        selectedModelId={selectedModel.id}
-        onModelChange={vi.fn()}
-      />
-    );
+  it('closes dropdown after selection', () => {
+    render(<ModelSelector {...defaultProps} />);
 
-    expect(screen.getByRole('combobox')).toHaveValue(selectedModel.id);
+    fireEvent.click(screen.getByRole('button', { name: new RegExp(AI_MODELS[0].name) }));
+    expect(screen.getByRole('listbox')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('option', { name: AI_MODELS[1].name }));
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+  });
+
+  it('shows checkmark for selected model', () => {
+    render(<ModelSelector {...defaultProps} />);
+
+    fireEvent.click(screen.getByRole('button', { name: new RegExp(AI_MODELS[0].name) }));
+
+    const selectedOption = screen.getByRole('option', { name: AI_MODELS[0].name });
+    expect(selectedOption).toHaveAttribute('aria-selected', 'true');
   });
 });
