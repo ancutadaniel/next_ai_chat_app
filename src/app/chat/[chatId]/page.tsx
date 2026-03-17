@@ -6,15 +6,17 @@ interface PageProps {
   params: Promise<{
     chatId: string;
   }>;
+  searchParams: Promise<{ prompt?: string }>;
 }
 
-export default async function ChatPage({ params }: PageProps) {
+export default async function ChatPage({ params, searchParams }: PageProps) {
   const session = await auth();
   if (!session) {
     return <div className="flex h-full items-center justify-center text-[var(--studio-text-secondary)]">Please sign in to view your chats.</div>;
   }
 
   const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
   const conversation = await getConversation(resolvedParams.chatId);
   if (!conversation) {
     return <div className="flex h-full items-center justify-center text-[var(--studio-text-secondary)]">Chat not found or you do not have permission to view it.</div>;
@@ -32,6 +34,7 @@ export default async function ChatPage({ params }: PageProps) {
       initialModel={conversation.model ?? undefined}
       initialProvider={conversation.provider ?? undefined}
       initialSystemPrompt={conversation.systemPrompt}
+      initialPrompt={resolvedSearchParams.prompt}
     />
   );
 }

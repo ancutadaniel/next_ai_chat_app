@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useTransition } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { deleteConversation, updateConversationTitle } from '@/app/actions';
 import TrashIcon from './icons/TrashIcon';
@@ -92,7 +93,7 @@ export default function HistoryItem({ chat, onNavigate }: HistoryItemProps) {
         )}
       </div>
 
-      {isModalOpen && (
+      {isModalOpen && typeof document !== 'undefined' && createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-[var(--studio-sidebar)] rounded-lg p-6 shadow-xl border border-[var(--studio-border)]">
             <h2 className="text-lg font-semibold mb-4">Delete chat?</h2>
@@ -114,7 +115,8 @@ export default function HistoryItem({ chat, onNavigate }: HistoryItemProps) {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

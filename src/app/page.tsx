@@ -1,5 +1,4 @@
 import { auth } from '@/auth';
-import { createNewChat } from '@/app/actions';
 
 const EXAMPLE_PROMPTS = [
   { icon: '💡', text: 'Explain quantum computing in simple terms' },
@@ -57,7 +56,13 @@ export default async function Home() {
 
       <div className="mt-8 grid max-w-2xl grid-cols-1 gap-3 sm:grid-cols-2">
         {EXAMPLE_PROMPTS.map((prompt) => (
-          <form key={prompt.text} action={createNewChat}>
+          <form key={prompt.text} action={async (formData: FormData) => {
+            'use server';
+            const { createNewChat } = await import('@/app/actions');
+            const promptText = formData.get('prompt') as string;
+            await createNewChat(promptText);
+          }}>
+            <input type="hidden" name="prompt" value={prompt.text} />
             <button
               type="submit"
               className="w-full rounded-lg border border-[var(--studio-border)] bg-[var(--studio-sidebar)] p-4 text-left text-sm transition-colors hover:border-[var(--studio-accent)]/50 hover:bg-white/5"

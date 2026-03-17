@@ -24,6 +24,7 @@ interface ChatProps {
   initialModel?: string;
   initialProvider?: string;
   initialSystemPrompt?: string | null;
+  initialPrompt?: string;
 }
 
 export default function Chat({
@@ -32,12 +33,13 @@ export default function Chat({
   initialModel,
   initialProvider,
   initialSystemPrompt,
+  initialPrompt,
 }: ChatProps) {
   const router = useRouter();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [hasScrolledUp, setHasScrolledUp] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState(initialPrompt || '');
 
   const [selectedModel, setSelectedModel] = useState({
     id: DEFAULT_MODEL.id,
@@ -131,7 +133,7 @@ export default function Chat({
   return (
     <div className="flex h-full flex-col">
       {/* Top bar with model selector */}
-      <div className="flex items-center gap-2 border-b border-[var(--studio-border)] px-4 py-2">
+      <div className="flex items-center gap-2 border-b border-[var(--studio-border)] px-6 py-2">
         <ModelSelector
           selectedModelId={selectedModel.id}
           onModelChange={(id, provider, modelId) =>

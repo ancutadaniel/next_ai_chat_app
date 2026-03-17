@@ -9,7 +9,8 @@ import { auth, signIn, signOut } from '@/auth';
 import { db } from '@/db';
 import { conversations, messages } from '@/db/schema';
 
-export async function createNewChat() {
+export async function createNewChat(promptOrFormData?: string | FormData) {
+  const prompt = typeof promptOrFormData === 'string' ? promptOrFormData : undefined;
   const session = await auth();
   if (!session?.user?.id) {
     throw new Error('Unauthorized: Please sign in to create a chat.');
@@ -23,7 +24,10 @@ export async function createNewChat() {
     title: 'New Chat',
   });
 
-  redirect(`/chat/${newConversationId}`);
+  const url = prompt
+    ? `/chat/${newConversationId}?prompt=${encodeURIComponent(prompt)}`
+    : `/chat/${newConversationId}`;
+  redirect(url);
 }
 
 export async function getChatHistory() {
