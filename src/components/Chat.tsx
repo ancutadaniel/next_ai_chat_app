@@ -132,6 +132,20 @@ export default function Chat({
 
   return (
     <div className="flex h-full flex-col">
+      {/* Top bar with model selector */}
+      <div className="flex items-center gap-3 border-b border-[var(--studio-border)] px-6 py-3">
+        <ModelSelector
+          selectedModelId={selectedModel.id}
+          onModelChange={(id, provider, modelId) =>
+            setSelectedModel({ id, provider, modelId })
+          }
+        />
+        <SystemPromptEditor
+          systemPrompt={systemPrompt}
+          onSystemPromptChange={setSystemPrompt}
+        />
+      </div>
+
       {/* Messages */}
       <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
         {messages.length === 0 && (
@@ -179,22 +193,8 @@ export default function Chat({
         </div>
       )}
 
-      {/* Input area with model selector */}
+      {/* Input area */}
       <div className="w-full p-4">
-        <div className="mx-auto max-w-4xl">
-          <div className="mb-2 flex items-center gap-2">
-            <ModelSelector
-              selectedModelId={selectedModel.id}
-              onModelChange={(id, provider, modelId) =>
-                setSelectedModel({ id, provider, modelId })
-              }
-            />
-            <SystemPromptEditor
-              systemPrompt={systemPrompt}
-              onSystemPromptChange={setSystemPrompt}
-            />
-          </div>
-        </div>
         <ChatInput
           input={input}
           onInputChange={setInput}

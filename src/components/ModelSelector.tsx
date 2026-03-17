@@ -103,7 +103,7 @@ export default function ModelSelector({ selectedModelId, onModelChange }: ModelS
         <div
           role="listbox"
           aria-activedescendant={focusedIndex >= 0 ? `model-${AI_MODELS[focusedIndex].id}` : undefined}
-          className="absolute bottom-full left-0 z-50 mb-2 w-64 overflow-hidden rounded-lg border border-[var(--studio-border)] bg-[var(--studio-sidebar)] py-1 shadow-xl"
+          className="absolute top-full left-0 z-50 mt-2 w-64 overflow-hidden rounded-lg border border-[var(--studio-border)] bg-[var(--studio-sidebar)] py-1 shadow-xl"
         >
           {providers.map((provider) => (
             <div key={provider}>
