@@ -56,7 +56,7 @@ export default async function Home() {
 
       <div className="mt-8 grid max-w-2xl grid-cols-1 gap-3 sm:grid-cols-2">
         {EXAMPLE_PROMPTS.map((prompt) => (
-          <form key={prompt.text} action={async (formData: FormData) => {
+          <form key={prompt.text} className="flex" action={async (formData: FormData) => {
             'use server';
             const { createNewChat } = await import('@/app/actions');
             const promptText = formData.get('prompt') as string;
@@ -65,7 +65,7 @@ export default async function Home() {
             <input type="hidden" name="prompt" value={prompt.text} />
             <button
               type="submit"
-              className="w-full rounded-lg border border-[var(--studio-border)] bg-[var(--studio-sidebar)] p-4 text-left text-sm transition-colors hover:border-[var(--studio-accent)]/50 hover:bg-white/5"
+              className="flex w-full items-center rounded-lg border border-[var(--studio-border)] bg-[var(--studio-sidebar)] p-4 text-left text-sm transition-colors hover:border-[var(--studio-accent)]/50 hover:bg-white/5"
             >
               <span className="mr-2">{prompt.icon}</span>
               {prompt.text}

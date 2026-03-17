@@ -54,14 +54,14 @@ export default function ChatInput({
               placeholder="Enter a prompt here..."
               minRows={1}
               maxRows={6}
-              className="w-full resize-none rounded-2xl border border-transparent bg-white/5 p-4 pr-12 text-[var(--studio-text-primary)] transition-all focus:border-[var(--studio-border)] focus:bg-[var(--studio-sidebar)] focus:outline-none focus:ring-2 focus:ring-[var(--studio-accent)]/50"
+              className="w-full resize-none rounded-2xl border border-transparent bg-white/5 p-4 pr-14 text-[var(--studio-text-primary)] transition-all focus:border-[var(--studio-border)] focus:bg-[var(--studio-sidebar)] focus:outline-none focus:ring-2 focus:ring-[var(--studio-accent)]/50"
               autoComplete="off"
               disabled={isLoading}
             />
             <button
               type="submit"
               disabled={!input.trim() || isLoading}
-              className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center text-gray-400 transition-colors hover:text-white disabled:opacity-30 disabled:hover:text-gray-400"
+              className="absolute bottom-1/2 right-3 translate-y-1/2 flex items-center justify-center text-gray-400 transition-colors hover:text-white disabled:opacity-30 disabled:hover:text-gray-400"
             >
               <ArrowUpIcon />
             </button>
