@@ -1,5 +1,5 @@
 {
-  "name": "ai-chat-app",
+  "name": "w3b-ai-chat",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -11,40 +11,61 @@
     "db:drop": "drizzle-kit drop",
     "db:studio": "drizzle-kit studio",
     "db:reset": "yarn db:drop && yarn db:push",
-    "db:test": "node scripts/db-test.mjs"
+    "db:test": "node scripts/db-test.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
+    "@ai-sdk/google": "3.0.43",
+    "@ai-sdk/groq": "3.0.29",
+    "@ai-sdk/openai": "3.0.41",
+    "@ai-sdk/react": "3.0.118",
     "@auth/core": "^0.40.0",
     "@auth/drizzle-adapter": "^1.10.0",
     "@heroicons/react": "^2.2.0",
     "@neondatabase/serverless": "^1.0.1",
     "@vercel/postgres": "^0.10.0",
+    "ai": "6.0.116",
     "drizzle-orm": "^0.44.4",
     "groq-sdk": "^0.30.0",
+    "highlight.js": "^11.11.1",
     "next": "15.4.10",
     "next-auth": "^5.0.0-beta.29",
     "react": "19.2.0-canary-9784cb37-20250730",
     "react-dom": "19.2.0-canary-9784cb37-20250730",
-    "react-textarea-autosize": "^8.5.9"
+    "react-markdown": "^10.1.0",
+    "react-textarea-autosize": "^8.5.9",
+    "rehype-highlight": "^7.0.2",
+    "remark-gfm": "^4.0.1",
+    "sonner": "^2.0.7",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@next/eslint-plugin-next": "^15.4.5",
     "@tailwindcss/postcss": "^4",
     "@tailwindcss/typography": "^0.5.16",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^6.0.1",
     "dotenv": "^17.2.1",
     "drizzle-kit": "^0.31.4",
     "eslint": "^9",
     "eslint-config-next": "15.4.5",
     "eslint-plugin-react-hooks": "^5.2.0",
+    "jsdom": "^29.0.0",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.6.14",
     "tailwindcss": "^4",
     "tsx": "^4.20.4",
-    "typescript": "5.9.2"
+    "typescript": "5.9.2",
+    "vite": "^8.0.0",
+    "vitest": "^4.1.0"
   },
   "packageManager": "yarn@4.9.2"
 }

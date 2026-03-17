@@ -1,31 +1,54 @@
 /* In: src/app/globals.css */
 @import 'tailwindcss';
+@import 'highlight.js/styles/github-dark.css';
 
-/* This part is for the default light theme, which we aren't using but is good to keep */
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
 
-/* This is our active dark theme */
 @media (prefers-color-scheme: dark) {
   :root {
-    /* Define the full AI Studio color palette as CSS variables */
     --studio-bg: #131314;
     --studio-sidebar: #1e1f20;
     --studio-accent: #8ab4f8;
     --studio-text-primary: #e8eaed;
     --studio-text-secondary: #bdc1c6;
     --studio-border: #3c4043;
-
-    /* Point the main background and foreground to our new theme variables */
     --background: var(--studio-bg);
     --foreground: var(--studio-text-primary);
   }
 }
 
-/* This applies the main background and text color to the body */
 body {
   background: var(--background);
   color: var(--foreground);
+}
+
+/* Highlight.js overrides for dark theme */
+.hljs {
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+/* Typing indicator animation */
+@keyframes typing-dot {
+  0%, 60%, 100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-4px);
+  }
+}
+
+.typing-dot {
+  animation: typing-dot 1.4s infinite;
+}
+.typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
 }

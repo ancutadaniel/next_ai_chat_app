@@ -59,6 +59,9 @@ export const conversations = pgTable('conversations', {
   id: text('id').primaryKey(),
   userId: text('user_id').notNull().references(() => users.id, { onDelete: "cascade" }),
   title: text('title').notNull(),
+  model: text('model').default('llama-3.3-70b-versatile'),
+  provider: text('provider').default('groq'),
+  systemPrompt: text('system_prompt'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 }, (table) => ({
   userIndex: index('user_idx').on(table.userId),
@@ -69,6 +72,7 @@ export const messages = pgTable('messages', {
   conversationId: text('conversation_id').references(() => conversations.id, { onDelete: "cascade" }).notNull(),
   role: text('role', { enum: ['user', 'assistant'] }).notNull(),
   content: text('content').notNull(),
+  model: text('model'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
