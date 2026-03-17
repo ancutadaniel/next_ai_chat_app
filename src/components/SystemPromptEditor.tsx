@@ -26,7 +26,7 @@ export default function SystemPromptEditor({
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 z-50 mt-2 w-80 rounded-lg border border-[var(--studio-border)] bg-[var(--studio-sidebar)] p-4 shadow-xl">
+        <div className="absolute bottom-full left-0 z-50 mb-2 w-80 rounded-lg border border-[var(--studio-border)] bg-[var(--studio-sidebar)] p-4 shadow-xl">
           <div className="mb-2 flex items-center justify-between">
             <label className="text-sm font-medium text-[var(--studio-text-primary)]">
               System Prompt
