@@ -61,7 +61,7 @@ export default function ChatInput({
             <button
               type="submit"
               disabled={!input.trim() || isLoading}
-              className="absolute bottom-3 right-4 flex items-center justify-center text-gray-400 transition-colors hover:text-white disabled:opacity-30 disabled:hover:text-gray-400"
+              className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center text-gray-400 transition-colors hover:text-white disabled:opacity-30 disabled:hover:text-gray-400"
             >
               <ArrowUpIcon />
             </button>

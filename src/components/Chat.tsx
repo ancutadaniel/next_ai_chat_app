@@ -133,7 +133,7 @@ export default function Chat({
   return (
     <div className="flex h-full flex-col">
       {/* Top bar with model selector */}
-      <div className="flex items-center gap-2 border-b border-[var(--studio-border)] px-6 py-2">
+      <div className="flex items-center gap-3 border-b border-[var(--studio-border)] px-6 py-4">
         <ModelSelector
           selectedModelId={selectedModel.id}
           onModelChange={(id, provider, modelId) =>
